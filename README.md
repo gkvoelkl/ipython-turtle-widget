@@ -38,7 +38,7 @@ t
 
 The turtle is drawn on its own part of the screen.  
 
-<img src="pic/screen.png" width="280" align="left"><br>
+<img src="pic/screen.png" width="280" align="left"><br><br><br><br><br>
 
 Or integrate the turtle graphic into the page
 
