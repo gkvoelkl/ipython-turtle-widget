@@ -1,5 +1,6 @@
 
-# ipython-turtle-widget - Creating Turtle Graphics in IPython/Jupyter
+# ipython-turtle-widget
+## Creating Turtle Graphics in IPython/Jupyter
 
 Draw on the page or use an extra window. **under construction**
 
