@@ -48,7 +48,7 @@ t2 = Turtle(fixed=False, width=100, height=100)
 t2
 ```
 
-<img src="pic/start.png" align="left">
+<img src="pic/start.png" align="left"><br><br><br><br><br>
 
 With *width* and *height* you can change the extension of the drawing canvas.
 
