@@ -11,14 +11,18 @@ If you like it, use it. If you have some suggestions, tell me (gkvoelkl@nelson-g
 ## Install
 
 ### To install use pip:
+```
 $ pip install ipyturtle
 $ jupyter nbextension enable --py --sys-prefix ipyturtle
+```
 ### For a development installation (requires npm),
+```
 $ git clone https://github.com/gkvoelkl/ipython-turtle-widget.git
 $ cd ipython-turtle-widget
 $ pip install -e .
 $ jupyter nbextension install --py --symlink --sys-prefix ipyturtle
 $ jupyter nbextension enable --py --sys-prefix ipyturtle
+```
 ## Examples
 
 The most examples are inspired by **Harold Abelson, Andrea diSessa: Turtle Geometry, MIT Press 1986**
