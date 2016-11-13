@@ -153,7 +153,7 @@ def circle():
 t
 ```
 
-<img src="pic/circle.png" align="left">
+<img src="pic/circle.png" align="left"><br><br><br><br><br>
 
 
 ```python
