@@ -115,6 +115,10 @@ version_ns = {}
 with open(os.path.join(here, 'ipyturtle', '_version.py')) as f:
     exec(f.read(), {}, version_ns)
 
+# Get the long description from the README file
+with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
+    LONG_DESCRIPTION = f.read()
+
 setup_args = {
     'name': 'ipyturtle',
     'version': version_ns['__version__'],
@@ -142,10 +146,11 @@ setup_args = {
 
     'author': 'gkvoelkl',
     'author_email': 'gkvoelkl@nelson-games.de',
-    'url': 'http://jupyter.org',
+    'url': 'https://github.com/gkvoelkl/ipython-turtle-widget',
     'keywords': [
         'ipython',
         'jupyter',
+        'turtle',
         'widgets',
     ],
     'classifiers': [
