@@ -23,15 +23,16 @@ import ipywidgets as widgets
 import math
 from traitlets import Unicode, Bool, Int, Float
 
-
-@widgets.register('turtle.Turtle')
+@widgets.register
 class Turtle(widgets.DOMWidget):
     """"""
     _view_name = Unicode('TurtleView').tag(sync=True)
     _model_name = Unicode('TurtleModel').tag(sync=True)
-    _view_module = Unicode('ipython-turtle-widget').tag(sync=True)
-    _model_module = Unicode('ipython-turtle-widget').tag(sync=True)
-
+    _view_module = Unicode('ipyturtle').tag(sync=True)
+    _model_module = Unicode('ipyturtle').tag(sync=True)
+    _view_module_version = Unicode('^0.2.4').tag(sync=True)
+    _model_module_version = Unicode('^0.2.4').tag(sync=True)
+  
     _canvas_fixed = Bool(True).tag(sync=True)
     _canvas_width = Int(320).tag(sync=True)
     _canvas_height = Int(320).tag(sync=True)
@@ -42,12 +43,14 @@ class Turtle(widgets.DOMWidget):
     _turtle_width = Int(10).tag(sync=True)
     _turtle_location_x = Float(0.0).tag(sync=True)
     _turtle_location_y = Float(0.0).tag(sync=True)
-    _turtle_heading = Int(90).tag(sync=True)
+    _turtle_heading = Float(90.0).tag(sync=True)
 
     _turtle_heading_x = Float(0).tag(sync=True)
     _turtle_heading_y = Float(1).tag(sync=True)
 
     _line = Unicode('').tag(sync=True)
+    _current_color = "Black"
+    _current_color_rgb = None
 
     def __init__(self, width=320, height=320, fixed=True):
         widgets.DOMWidget.__init__(self)
@@ -61,20 +64,30 @@ class Turtle(widgets.DOMWidget):
         self._pen_on = True
         self._turtle_location_x = 0
         self._turtle_location_y = 0
-        self._turtle_heading = 90
+        self._turtle_heading = 90.0
         self._turtle_heading_x = 0.0
         self._turtle_heading_y = 1.0
 
     def position(self):
-        return (self._turtle_location_x, self._turtle_location_y)
+        return self._turtle_location_x, self._turtle_location_y
 
     def forward(self, length):
-        start = "{} {}".format(self._turtle_location_x, self._turtle_location_y)
+        precision = 4
+        start = "{} {}".format(round(self._turtle_location_x,precision),
+                               round(self._turtle_location_y,precision))
         self._turtle_location_x += length * self._turtle_heading_x
         self._turtle_location_y += length * self._turtle_heading_y
-        end = " {} {}".format(self._turtle_location_x, self._turtle_location_y)
+        end = " {} {}".format(round(self._turtle_location_x, precision),
+                              round(self._turtle_location_y, precision))
+        #print(start, end)
         if self._pen_on:
-            self._line = start + end
+            color = self._current_color
+            if len(self._current_color)==0:
+                color = "rgb({},{},{})".format(self._current_color_rgb[0],
+                                               self._current_color_rgb[1],
+                                               self._current_color_rgb[2])
+            self._line = start + end + " " + color
+
 
     def back(self, length):
         self.forward(-length)
@@ -84,6 +97,7 @@ class Turtle(widgets.DOMWidget):
 
     def left(self, degree):
         self._turtle_heading += degree
+        self._turtle_heading = self._turtle_heading % 360
 
         hx = math.cos(math.radians(self._turtle_heading))
         hy = math.sin(math.radians(self._turtle_heading))
@@ -115,3 +129,16 @@ class Turtle(widgets.DOMWidget):
     def reset(self):
         self._reset()
         self._line = 'clear'
+
+    def pencolor(self,r=-1,g=-1,b=-1):
+        if r == -1:
+            if len(self._current_color)==0:
+                return  self._current_color_rgb
+            else:
+                return self._current_color
+        elif type(r) == str:
+            self._current_color = r
+            self._current_color_rgb = None
+        else:
+            self._current_color = ""
+            self._current_color_rgb = (r,g,b)
