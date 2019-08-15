@@ -1,4 +1,4 @@
-A Custom Jupyter Widget Library
+Creating Turtle Geometry in IPython (Jupyter Widget)
 
 Package Install
 ---------------
@@ -7,5 +7,5 @@ Package Install
 - [node](http://nodejs.org/)
 
 ```bash
-npm install --save ipython-turtle-widget
+npm install --save ipyturtle
 ```

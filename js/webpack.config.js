@@ -1,10 +1,11 @@
+var path = require('path');
 var version = require('./package.json').version;
 
-// Custom webpack loaders are generally the same for all webpack bundles, hence
+// Custom webpack rules are generally the same for all webpack bundles, hence
 // stored in a separate local variable.
-var loaders = [
-    { test: /\.json$/, loader: 'json-loader' },
-];
+var rules = [
+    { test: /\.css$/, use: ['style-loader', 'css-loader']}
+]
 
 
 module.exports = [
@@ -16,10 +17,10 @@ module.exports = [
      // "load_ipython_extension" function which is required for any notebook
      // extension.
      //
-        entry: './src/extension.js',
+        entry: './lib/extension.js',
         output: {
             filename: 'extension.js',
-            path: '../ipyturtle/static',
+            path: path.resolve(__dirname, '..', 'ipyturtle', 'static'),
             libraryTarget: 'amd'
         }
     },
@@ -29,19 +30,19 @@ module.exports = [
      // custom widget.
      // It must be an amd module
      //
-        entry: './src/index.js',
+        entry: './lib/index.js',
         output: {
             filename: 'index.js',
-            path: '../ipyturtle/static',
+            path: path.resolve(__dirname, '..', 'ipyturtle', 'static'),
             libraryTarget: 'amd'
         },
         devtool: 'source-map',
         module: {
-            loaders: loaders
+            rules: rules
         },
-        externals: ['jupyter-js-widgets']
+        externals: ['@jupyter-widgets/base']
     },
-    {// Embeddable ipython-turtle-widget bundle
+    {// Embeddable ipyturtle bundle
      //
      // This bundle is generally almost identical to the notebook bundle
      // containing the custom widget views and models.
@@ -55,17 +56,17 @@ module.exports = [
      // The target bundle is always `dist/index.js`, which is the path required
      // by the custom widget embedder.
      //
-        entry: './src/embed.js',
+        entry: './lib/embed.js',
         output: {
             filename: 'index.js',
-            path: './dist/',
+            path: path.resolve(__dirname, 'dist'),
             libraryTarget: 'amd',
-            publicPath: 'https://unpkg.com/ipython-turtle-widget@' + version + '/dist/'
+            publicPath: 'https://unpkg.com/ipyturtle@' + version + '/dist/'
         },
         devtool: 'source-map',
         module: {
-            loaders: loaders
+            rules: rules
         },
-        externals: ['jupyter-js-widgets']
+        externals: ['@jupyter-widgets/base']
     }
 ];

@@ -14,18 +14,21 @@ is_repo = os.path.exists(os.path.join(here, '.git'))
 
 npm_path = os.pathsep.join([
     os.path.join(node_root, 'node_modules', '.bin'),
-                os.environ.get('PATH', os.defpath),
+    os.environ.get('PATH', os.defpath),
 ])
 
 from distutils import log
+
 log.set_verbosity(log.DEBUG)
 log.info('setup.py entered')
 log.info('$PATH=%s' % os.environ['PATH'])
 
 LONG_DESCRIPTION = 'Creating Turtle Geometry in IPython (Jupyter Widget)'
 
+
 def js_prerelease(command, strict=False):
     """decorator for building minified js/css prior to another command"""
+
     class DecoratedCommand(command):
         def run(self):
             jsdeps = self.distribution.get_command_obj('jsdeps')
@@ -48,7 +51,9 @@ def js_prerelease(command, strict=False):
                     log.warn(str(e))
             command.run(self)
             update_package_data(self.distribution)
+
     return DecoratedCommand
+
 
 def update_package_data(distribution):
     """update package_data to catch changes during setup"""
@@ -76,9 +81,17 @@ class NPM(Command):
     def finalize_options(self):
         pass
 
+    def get_npm_name(self):
+        npmName = 'npm';
+        if platform.system() == 'Windows':
+            npmName = 'npm.cmd';
+
+        return npmName;
+
     def has_npm(self):
+        npmName = self.get_npm_name();
         try:
-            check_call(['npm', '--version'])
+            check_call([npmName, '--version'])
             return True
         except:
             return False
@@ -91,33 +104,32 @@ class NPM(Command):
     def run(self):
         has_npm = self.has_npm()
         if not has_npm:
-            log.error("`npm` unavailable.  If you're running this command using sudo, make sure `npm` is available to sudo")
+            log.error(
+                "`npm` unavailable.  If you're running this command using sudo, make sure `npm` is available to sudo")
 
         env = os.environ.copy()
         env['PATH'] = npm_path
 
         if self.should_run_npm_install():
             log.info("Installing build dependencies with npm.  This may take a while...")
-            check_call(['npm', 'install'], cwd=node_root, stdout=sys.stdout, stderr=sys.stderr)
+            npmName = self.get_npm_name();
+            check_call([npmName, 'install'], cwd=node_root, stdout=sys.stdout, stderr=sys.stderr)
             os.utime(self.node_modules, None)
 
         for t in self.targets:
             if not os.path.exists(t):
                 msg = 'Missing file: %s' % t
                 if not has_npm:
-                    msg += '\nnpm is required to build a development version of widgetsnbextension'
+                    msg += '\nnpm is required to build a development version of a widget extension'
                 raise ValueError(msg)
 
         # update package data in case this created new files
         update_package_data(self.distribution)
 
+
 version_ns = {}
 with open(os.path.join(here, 'ipyturtle', '_version.py')) as f:
     exec(f.read(), {}, version_ns)
-
-# Get the long description from the README file
-with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
-    LONG_DESCRIPTION = f.read()
 
 setup_args = {
     'name': 'ipyturtle',
@@ -126,14 +138,15 @@ setup_args = {
     'long_description': LONG_DESCRIPTION,
     'include_package_data': True,
     'data_files': [
-        ('share/jupyter/nbextensions/ipython-turtle-widget', [
+        ('share/jupyter/nbextensions/ipyturtle', [
             'ipyturtle/static/extension.js',
             'ipyturtle/static/index.js',
             'ipyturtle/static/index.js.map',
-        ]),
+        ],),
+        ('etc/jupyter/nbconfig/notebook.d', ['ipyturtle.json'])
     ],
     'install_requires': [
-        'ipywidgets>=5.1.5',
+        'ipywidgets>=7.0.0',
     ],
     'packages': find_packages(),
     'zip_safe': False,
@@ -150,7 +163,6 @@ setup_args = {
     'keywords': [
         'ipython',
         'jupyter',
-        'turtle',
         'widgets',
     ],
     'classifiers': [
@@ -159,6 +171,8 @@ setup_args = {
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
         'Topic :: Multimedia :: Graphics',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',

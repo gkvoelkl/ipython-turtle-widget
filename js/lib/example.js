@@ -1,6 +1,6 @@
 //The MIT License (MIT)
 //
-//Copyright (c) 2016 G. Völkl
+//Copyright (c) 2018 G. Völkl
 //
 //Permission is hereby granted, free of charge, to any person obtaining a copy
 //of this software and associated documentation files (the "Software"), to deal
@@ -19,22 +19,33 @@
 //LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
-var widgets = require('jupyter-js-widgets');
-var _ = require('underscore');
+var widgets = require('@jupyter-widgets/base');
+var _ = require('lodash');
 
 
 // Custom Model. Custom widgets models must at least provide default values
-// for model attributes, including `_model_name`, `_view_name`, `_model_module`
-// and `_view_module` when different from the base class.
+// for model attributes, including
 //
-// When serialiazing entire widget state for embedding, only values different from the
-// defaults will be specified.
+//  - `_view_name`
+//  - `_view_module`
+//  - `_view_module_version`
+//
+//  - `_model_name`
+//  - `_model_module`
+//  - `_model_module_version`
+//
+//  when different from the base class.
+
+// When serialiazing the entire widget state for embedding, only values that
+// differ from the defaults will be specified.
 var TurtleModel = widgets.DOMWidgetModel.extend({
-    defaults: _.extend({}, widgets.DOMWidgetModel.prototype.defaults, {
-        _model_name : 'HelloModel',
-        _view_name : 'HelloView',
-        _model_module : 'ipython-turtle-widget',
-        _view_module : 'ipython-turtle-widget'
+    defaults: _.extend(widgets.DOMWidgetModel.prototype.defaults(), {
+        _model_name : 'TurtleModel',
+        _view_name : 'TurtleView',
+        _model_module : 'ipyturtle',
+        _view_module : 'ipyturtle',
+        _model_module_version : '0.2.4',
+        _view_module_version : '0.2.4',
     })
 });
 
@@ -51,8 +62,10 @@ var TurtleView = widgets.DOMWidgetView.extend({
         } else {
              this.div.style.position = 'static';
         }
-        this.div.style.right = "50px";
-        this.div.style.top = "140px";
+        this.right = 50;
+        this.div.style.right = this.right + "px";
+        this.top = 140;
+        this.div.style.top = this.top + "px";
         this.canvasWidth = this.model.get('_canvas_width');
         console.log('canvasWidth',this.canvasWidth);
         this.div.style.width = this.canvasWidth +"px";
@@ -70,7 +83,9 @@ var TurtleView = widgets.DOMWidgetView.extend({
         this.div.appendChild(this.canvas);
         this.el.appendChild(this.div);
         this.canvas.className = 'turtle_canvas';
-            
+
+        this.isMouseDown = false;
+
         var context = this.canvas.getContext('2d');
         this.clearImageData = context.getImageData(0,0,this.canvas.width,this.canvas.height);
             
@@ -160,6 +175,8 @@ var TurtleView = widgets.DOMWidgetView.extend({
         console.log(pos[0],pos[1]);
         context.lineTo(parseInt(pos[2]),parseInt(pos[3]));
         console.log(pos[2],pos[3]);
+        context.strokeStyle=pos[4];
+        console.log(pos[4]);
         context.closePath();
         context.stroke();
     },
@@ -176,7 +193,73 @@ var TurtleView = widgets.DOMWidgetView.extend({
         context.putImageData(this.clearImageData,0,0); 
         console.log('clearRect');
     },
-        
+    events: {
+        'keydown': 'keypress',
+        'click': 'click',
+        'mousemove': 'mousemove',
+        'mouseup': 'mouseup',
+        'mousedown': 'mousedown'
+    },
+
+    keypress: function(e) {
+        console.log("keypress");
+        var code = e.keyCode || e.which;
+        //this.send({event: 'keypress', code: code});
+    },
+
+    click: function(e) {
+        console.log("click");
+        //this.send({event: 'click', button: e.button});
+        /*var cordx = 0;
+       var cordy = 0;
+       if (!e) {
+        var e = window.event;
+       }
+       if (e.pageX || e.pageY){
+        cordx = e.pageX;
+        cordy = e.pageY;
+       }
+       else if (e.clientX || e.clientY){
+        cordx = e.clientX;
+        cordy = e.clientY;
+       }
+       this.div.style.left = cordx.toString()+'px';
+       this.div.style.top = cordy.toString()+'px';
+       */
+    },
+
+    mousemove: function(e){
+        console.log('mousemove');
+        if (this.isMouseDown){
+            this.mouseX = e.screenX - this.mouseX;
+            this.mouseY = e.screenY - this.mouseY;
+            this.right -= this.mouseX;
+            this.top += this.mouseY;
+            this.mouseX = e.screenX;
+            this.mouseY = e.screenY;
+            console.log('mouseX',this.mouseX);
+            //this.div.style.left = cordx.toString()+'px';
+            this.div.style.right = this.right + 'px';
+            this.div.style.top = this.top +'px';
+        }
+    },
+
+    drag: function(e){
+        console.log('drag');
+    },
+
+    mousedown: function(e){
+        console.log('mousedown');
+        this.isMouseDown = true;
+        this.mouseX = e.screenX;
+        this.mouseY = e.screenY;
+    },
+
+    mouseup: function(e){
+        console.log('mouseup');
+        this.isMouseDown = false;
+    },
+
     value_changed: function() {
         //this.el.textContent = this.model.get('value');
     }
