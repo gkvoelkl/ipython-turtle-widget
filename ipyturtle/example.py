@@ -128,6 +128,8 @@ class Turtle(widgets.DOMWidget):
 
     def reset(self):
         self._reset()
+        self.pencolor(0, 0, 0)
+        self.forward(0)
         self._line = 'clear'
 
     def pencolor(self,r=-1,g=-1,b=-1):
@@ -142,3 +144,4 @@ class Turtle(widgets.DOMWidget):
         else:
             self._current_color = ""
             self._current_color_rgb = (r,g,b)
+        self.forward(0)
