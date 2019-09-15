@@ -95,6 +95,19 @@ class Turtle(widgets.DOMWidget):
     def heading(self):
         return self._turtle_heading
 
+    def goto(self, x, y=None):
+        if y is None:
+            y = x[1]
+            x = x[0]
+        self._turtle_location_x = float(x)
+        self._turtle_location_y = float(y)
+
+    def setpos(self, x, y=None):
+        return self.goto(x, y)
+
+    def setposition(self, x, y=None):
+        return self.goto(x, y)
+
     def left(self, degree):
         self._turtle_heading += degree
         self._turtle_heading = self._turtle_heading % 360
