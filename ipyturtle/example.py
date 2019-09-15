@@ -43,10 +43,10 @@ class Turtle(widgets.DOMWidget):
     _turtle_width = Int(10).tag(sync=True)
     _turtle_location_x = Float(0.0).tag(sync=True)
     _turtle_location_y = Float(0.0).tag(sync=True)
-    _turtle_heading = Float(90.0).tag(sync=True)
+    _turtle_heading = Float(00.0).tag(sync=True)
 
-    _turtle_heading_x = Float(0).tag(sync=True)
-    _turtle_heading_y = Float(1).tag(sync=True)
+    _turtle_heading_x = Float(1).tag(sync=True)
+    _turtle_heading_y = Float(0).tag(sync=True)
 
     _line = Unicode('').tag(sync=True)
     _current_color = "Black"
@@ -65,8 +65,8 @@ class Turtle(widgets.DOMWidget):
         self._turtle_location_x = 0
         self._turtle_location_y = 0
         self._turtle_heading = 90.0
-        self._turtle_heading_x = 0.0
-        self._turtle_heading_y = 1.0
+        self._turtle_heading_x = 1.0
+        self._turtle_heading_y = 0.0
 
     def position(self):
         return self._turtle_location_x, self._turtle_location_y
