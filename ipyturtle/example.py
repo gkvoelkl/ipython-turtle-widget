@@ -120,7 +120,6 @@ class Turtle(widgets.DOMWidget):
         self._turtle_heading_x = hx
         self._turtle_heading_y = hy
 
-    # def right(self, degree):  # Converting to optional degree
     def right(self, degree=None):
         if degree is None:
             degree = 90
