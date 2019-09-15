@@ -95,7 +95,9 @@ class Turtle(widgets.DOMWidget):
     def heading(self):
         return self._turtle_heading
 
-    def left(self, degree):
+    def left(self, degree=None):
+        if degree is None:
+            degree = 90
         self._turtle_heading += degree
         self._turtle_heading = self._turtle_heading % 360
 
@@ -105,7 +107,9 @@ class Turtle(widgets.DOMWidget):
         self._turtle_heading_x = hx
         self._turtle_heading_y = hy
 
-    def right(self, degree):
+    def right(self, degree=None):
+        if degree is None:
+            degree = 90
         self.left(-degree)
 
     def penup(self):
